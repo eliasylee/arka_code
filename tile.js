@@ -1,19 +1,15 @@
 class Tile {
-  constructor() {
+  constructor(coords) {
     this.uncovered = false;
     this.ship = false;
+    this.coords = coords;
   }
 
   uncover() {
     this.uncovered = true;
-    if (this.ship) {
-      return "Hit!";
-    } else {
-      return "Miss!";
-    }
   }
 
-  placeShip() {
+  hasShip() {
     this.ship = true;
   }
 }

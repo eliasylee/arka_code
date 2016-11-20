@@ -4,8 +4,12 @@ const Grid = require('./grid');
 class Game {
   constructor() {
     this.turn = -1;
-    this.players = [new Player("Player 1"), new Player("Player 2")];
-    this.grids = [new Grid(), new Grid()];
+    this.playTurn = this.playTurn.bind(this);
+    this.renderGrids = this.renderGrids.bind(this);
+    this.players = [new Player("Player 1", this.renderGrids),
+                    new Player("Player 2", this.renderGrids)];
+    this.grids = [new Grid(this.playTurn),
+                  new Grid(this.playTurn)];
   }
 
   run(complete) {
@@ -15,24 +19,25 @@ class Game {
 
   preGame() {
     console.log(`Welcome to Battleship, ${this.currentPlayer().name}!`);
-    this.currentGrid().promptStart(this.currentPlayer());
+    const grid = this.currentGrid();
+    grid.placeShip(this.currentPlayer());
   }
 
   postGame() {
+    this.renderGrids();
     console.log(`Congratulations, ${this.currentPlayer().name}! You are the winner!`);
     this.complete();
   }
 
   playTurn() {
     this.turn += 1;
-    this.renderGrids();
 
     if (this.turn < 2) {
       this.preGame();
     } else if (this.isOver()) {
       this.postGame();
     } else {
-      let move = this.currentPlayer().getMove(this.currentGrid);
+      let move = this.currentPlayer().getMove(this.nonCurrentGrid(), this.renderGrids);
     }
   }
 
@@ -49,8 +54,8 @@ class Game {
   }
 
   renderGrids() {
-    this.currentGrid().renderFull();
     this.nonCurrentGrid().renderHidden();
+    this.currentGrid().renderFull();
   }
 
   isOver() {

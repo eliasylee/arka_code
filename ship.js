@@ -1,5 +1,3 @@
-const Reader = require('./reader');
-
 const SHIPS = {
   'Destroyer': 2,
   'Submarine': 3,
@@ -23,41 +21,18 @@ class Ship {
     this.hits = 0;
   }
 
-  name() {
-    return this.name;
-  }
-
-  promptStart(player) {
-    let start;
-
-    Reader.question(`${player.name}, where would you like to place your ${this.name} of length ${SHIPS[this.name]}? (x,y) `, answer => {
-      start = answer.split(",");
-
-      if (start) {
-        return start;
-      }
-    });
-  }
-
-  promptDirection(player) {
-    let direction;
-
-    Reader.question(`${player.name}, which direction? (up, down, left, right) `, answer => {
-      direction = answer;
-
-      if (direction) {
-        return direction;
-      }
-    });
-  }
-
-  setCoords(start, direction) {
+  setCoords(player, start, direction, playTurn) {
     for (let i = 0; i < this.length; i++) {
       const delta = DIRECTIONS[direction];
       const row = start[0] + (delta[0] * i);
       const col = start[1] + (delta[1] * i);
       this.coords.push([row, col]);
     }
+    playTurn(player);
+  }
+
+  takesHit() {
+    this.hits += 1;
   }
 
   checkSunk() {
