@@ -61,11 +61,12 @@ class Grid {
   promptStart(player, ship) {
     Reader.question(`${player.name}, where would you like to place your ${ship.name} of length ${ship.length}? (x,y) `, answer => {
       const start = answer.split(",").map(str => parseInt(str) - 1);
-      if (answer) {
-        this.promptDirection(player, start);
-      } else {
-        console.log("You didn't input a coordinate!");
+
+      if (isNaN(start[0]) || isNaN(start[1])) {
+        console.log("You didn't input a proper coordinate!");
         this.promptStart(player, ship);
+      } else {
+        this.promptDirection(player, start);
       }
     });
   }
