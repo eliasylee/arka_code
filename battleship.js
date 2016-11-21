@@ -6,6 +6,7 @@ const complete = () => {
     if (answer.toLowerCase() === "y") {
       new Game().run(complete);
     } else {
+      console.log("Thanks for playing!");
       Reader.close();
     }
   });

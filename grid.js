@@ -51,6 +51,10 @@ class Grid {
   placeShip(player) {
     const ship = this.ships[this.placedShips];
     if (this.placedShips < this.ships.length) {
+      const lines = process.stdout.getWindowSize()[1];
+      for (let i = 0; i < lines; i++) {
+          console.log('\r\n');
+      }
       this.renderFull();
       this.promptStart(player, ship);
     } else {
@@ -73,15 +77,10 @@ class Grid {
 
   promptDirection(player, start) {
     Reader.question(`${player.name}, which direction? (up, down, left, right) `, direction => {
-      if (direction) {
-        if (DIRECTIONS[direction]) {
-          this.checkPlacement(player, start, direction);
-        } else {
-          console.log("You didn't input a proper direction!");
-          this.promptDirection(player, start);
-        }
+      if (DIRECTIONS[direction]) {
+        this.checkPlacement(player, start, direction);
       } else {
-        console.log("You didn't input a direction!");
+        console.log("You didn't input a proper direction!");
         this.promptDirection(player, start);
       }
     });
@@ -96,15 +95,14 @@ class Grid {
       const coords = [start[0] + (delta[0] * i), start[1] + (delta[1] * i)];
       const row = coords[0];
       const col = coords[1];
-      const tile = this.grabTile(coords);
 
       if (row < 0 || row > 9 || col < 0 || col > 9) {
-        console.log(`[${start}] going ${direction} is not within the bounds!`);
-        this.placeShip(player);
+        console.log(`[${start[0] + 1},${start[1] + 1}] going ${direction} is not within the bounds!`);
+        setTimeout(() => { this.placeShip(player); }, 1500);
         break;
-      } else if (tile.ship) {
+      } else if (this.grabTile(coords).ship) {
         console.log(`A ship is in the way!`);
-        this.placeShip(player);
+        setTimeout(() => { this.placeShip(player); }, 1500);
         break;
       } else if (i === length - 1) {
         this.commitPlacement(player, start, direction);
@@ -144,10 +142,10 @@ class Grid {
 
     if (row < 0 || row > 9 || col < 0 || col > 9) {
       console.log(`The move ${move} is not within the bounds!`);
-      getMove(grid);
+      setTimeout(() => { player.getMove(this); }, 1500);
     } else if (tile.uncovered) {
       console.log(`You've already done the move ${move}!`);
-      getMove(grid);
+      setTimeout(() => { player.getMove(this); }, 1500);
     } else if (tile.ship) {
       console.log("You hit the enemy!");
       this.commitSuccessfulMove(player, tile);
@@ -164,7 +162,7 @@ class Grid {
 
   commitUnsuccessfulMove(tile) {
     tile.uncover();
-    this.playTurn();
+    setTimeout(this.playTurn, 1500);
   }
 
   alertShip(player, tile) {
@@ -182,9 +180,9 @@ class Grid {
     });
 
     if (this.isOver()) {
-      this.postGame();
+      setTimeout(this.postGame, 1500);
     } else {
-      player.getMove(this);
+      setTimeout(() => { player.getMove(this); }, 1500);
     }
   }
 
@@ -213,6 +211,10 @@ class Grid {
         console.log((index + 1) + "  " + newRow.join(" "));
       }
     });
+  }
+
+  renderDivider() {
+    console.log("--------------------------------");
   }
 
   renderFull() {

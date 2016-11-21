@@ -11,10 +11,11 @@ class Player {
     this.renderGrids();
     Reader.question(`${this.name}, what is your move? (x,y) `, answer => {
       const move = answer.split(",").map(str => parseInt(str) - 1);
-      if (answer) {
-        grid.checkMove(this, move, grid, this.getMove);
+      if (isNaN(move[0]) || isNaN(move[1])) {
+        console.log("You didn't input a proper coordinate!");
+        setTimeout(() => { this.getMove(grid); }, 1500);
       } else {
-        this.getMove(grid);
+        grid.checkMove(this, move, grid, this.getMove);
       }
     });
   }
