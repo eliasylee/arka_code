@@ -5,11 +5,12 @@ class Game {
   constructor() {
     this.turn = -1;
     this.playTurn = this.playTurn.bind(this);
+    this.postGame = this.postGame.bind(this);
     this.renderGrids = this.renderGrids.bind(this);
     this.players = [new Player("Player 1", this.renderGrids),
                     new Player("Player 2", this.renderGrids)];
-    this.grids = [new Grid(this.playTurn),
-                  new Grid(this.playTurn)];
+    this.grids = [new Grid(this.playTurn, this.postGame),
+                  new Grid(this.playTurn, this.postGame)];
   }
 
   run(complete) {
@@ -31,11 +32,8 @@ class Game {
 
   playTurn() {
     this.turn += 1;
-
     if (this.turn < 2) {
       this.preGame();
-    } else if (this.isOver()) {
-      this.postGame();
     } else {
       let move = this.currentPlayer().getMove(this.nonCurrentGrid(), this.renderGrids);
     }
@@ -56,10 +54,6 @@ class Game {
   renderGrids() {
     this.nonCurrentGrid().renderHidden();
     this.currentGrid().renderFull();
-  }
-
-  isOver() {
-    return this.grids[0].isOver() || this.grids[0].isOver();
   }
 }
 

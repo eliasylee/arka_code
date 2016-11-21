@@ -18,8 +18,9 @@ const DIRECTIONS = {
 };
 
 class Grid {
-  constructor(playTurn) {
+  constructor(playTurn, postGame) {
     this.playTurn = playTurn;
+    this.postGame = postGame;
     this.grid = this.createGrid();
     this.ships = this.createShips();
     this.placedShips = 0;
@@ -157,8 +158,7 @@ class Grid {
 
   commitSuccessfulMove(player, tile) {
     tile.uncover();
-    this.alertShip(tile);
-    player.getMove(this);
+    this.alertShip(player, tile);
   }
 
   commitUnsuccessfulMove(tile) {
@@ -166,7 +166,7 @@ class Grid {
     this.playTurn();
   }
 
-  alertShip(tile) {
+  alertShip(player, tile) {
     const shipName = tile.shipName;
     const ships = this.ships;
 
@@ -175,9 +175,16 @@ class Grid {
         ship.takesHit();
         if (ship.checkSunk()) {
           console.log(`You sunk the enemy's ${ship.name}!`);
+          this.sunkShips += 1;
         }
       }
     });
+
+    if (this.isOver()) {
+      this.postGame();
+    } else {
+      player.getMove(this);
+    }
   }
 
   isOver() {
