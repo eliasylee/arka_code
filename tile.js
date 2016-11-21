@@ -12,6 +12,10 @@ class Tile {
   hasShip() {
     this.ship = true;
   }
+
+  setShipName(shipName) {
+    this.shipName = shipName;
+  }
 }
 
 module.exports = Tile;

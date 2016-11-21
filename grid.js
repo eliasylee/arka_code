@@ -125,6 +125,7 @@ class Grid {
       const coords = [start[0] + (delta[0] * i), start[1] + (delta[1] * i)];
       const tile = this.grabTile(coords);
       tile.hasShip();
+      tile.setShipName(ship.name);
     }
   }
 
@@ -166,18 +167,17 @@ class Grid {
   }
 
   alertShip(tile) {
-    const coords = tile.coords;
-    for (let i = 0; i < this.ships.length; i++) {
-      const ship = this.ships[i];
-      if (ship.coords.indexOf(coords)) {
+    const shipName = tile.shipName;
+    const ships = this.ships;
+
+    ships.forEach(ship => {
+      if (ship.name === shipName) {
         ship.takesHit();
-        console.log(ship.checkSunk());
         if (ship.checkSunk()) {
           console.log(`You sunk the enemy's ${ship.name}!`);
         }
-        break;
       }
-    }
+    });
   }
 
   isOver() {
